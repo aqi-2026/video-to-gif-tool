@@ -49,11 +49,18 @@ def main():
     print(f"  执行命令: {' '.join(cmd)}")
 
     try:
-        result = subprocess.run(cmd, check=True, capture_output=True, text=True)
+        result = subprocess.run(cmd, check=True, text=True)
         print("  打包成功!")
     except subprocess.CalledProcessError as e:
-        print(f"  打包失败: {e}")
-        print(f"  错误输出: {e.stderr}")
+        print(f"  打包失败!")
+        print(f"  错误代码: {e.returncode}")
+        if hasattr(e, 'stderr') and e.stderr:
+            print(f"  错误输出: {e.stderr}")
+        if hasattr(e, 'stdout') and e.stdout:
+            print(f"  标准输出: {e.stdout}")
+        return False
+    except Exception as e:
+        print(f"  打包过程出错: {e}")
         return False
 
     # 移动exe到fin文件夹
